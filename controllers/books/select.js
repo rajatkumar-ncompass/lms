@@ -6,7 +6,6 @@ async function getBooksData(req, res) {
     let dataObtained;
     await c.executeQuery(`SELECT * FROM BOOK`).then((res) => {
       dataObtained = res;
-      console.log(dataObtained);
     });
 
     let eTime = performance.now();
