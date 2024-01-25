@@ -1,6 +1,6 @@
 const c = require("../../utils/db");
 
-async function getBookDetails(req, res) {
+async function getBookDetailsData(req, res) {
   try {
     let sTime = performance.now();
     let dataObtained;
@@ -27,5 +27,5 @@ async function getBookDetails(req, res) {
 }
 
 module.exports = {
-  getBookDetails,
+  getBookDetailsData,
 };

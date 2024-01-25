@@ -12,10 +12,12 @@ const connectionPromise = connection.promise();
 async function executeQuery(query) {
   let y;
   await connectionPromise.query(query).then((response) => {
-    y = response[0];
+    y = response;
   });
   return y;
 }
+
+
 
 module.exports = {
   executeQuery,

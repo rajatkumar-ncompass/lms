@@ -5,6 +5,9 @@ const bookDetailsUpdateController = require("../controllers/book_details/update"
 const bookDetailsInsertController = require("../controllers/book_details/insert");
 const bookDetailsDeleteController = require("../controllers/book_details/delete");
 
-router.get("/", bookDetailsSelectController.getBookDetails);
+router.get("/", bookDetailsSelectController.getBookDetailsData);
+router.post("/add", bookDetailsInsertController.postBookDetailsData);
+router.put("/update", bookDetailsUpdateController.putBookDetailsData);
+router.delete("/delete", bookDetailsDeleteController.deleteBookDetailsData);
 
 module.exports = router;

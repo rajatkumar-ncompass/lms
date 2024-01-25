@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path"); // Add this line to import the 'path' module
+require("dotenv").config({ path: path.resolve(__dirname, "./config/.env") });
 const express = require("express");
 const app = express();
 const router = express.Router();
