@@ -1,21 +1,11 @@
 const c = require("../../utils/db");
 
-async function putAuthorData(req, res) {
+const updateQuery = "UPDATE AUTHOR SET ${s} WHERE ID=${ID}";
+const putAuthorData = async (req, res) => {
   try {
     let sTime = performance.now();
     const { ID } = req.body;
     let fields = Object.keys(req.body);
-    // fields.map(async (f) => {
-    //   String(req.body[f]).length > 0
-    //     ? await c
-    //         .executeQuery(
-    //           `UPDATE AUTHOR SET ${f}="${req.body[f]}" WHERE ID="${ID}"`
-    //         )
-    //         .then((res) => {
-    //           console.log("Success");
-    //         })
-    //     : null;
-    // });
 
     let s = "";
     fields.map((f) => {
@@ -27,28 +17,31 @@ async function putAuthorData(req, res) {
     });
     s = s.slice(0, -1);
 
-    await c
-      .executeQuery(`UPDATE AUTHOR SET ${s} WHERE ID=${ID}`)
-      .then((res) => {
-        console.log("Success");
-      });
+    const finalUpdateQuery = updateQuery
+      .replace("${s}", s)
+      .replace("${ID}", ID);
+
+    await c.executeQuery(finalUpdateQuery).then((res) => {
+      console.log("Success");
+    });
 
     let eTime = performance.now();
     let tTime = eTime - sTime;
-    res.send({
-      success: true,
-      message: "Data Updated successfully",
-      startTime: sTime,
-      endTime: eTime,
-      totalTime: tTime,
-    });
+    let successResponse = successMessageFunction(
+      true,
+      200,
+      "Data Updated Successfully",
+      "",
+      sTime,
+      eTime,
+      tTime
+    );
+    res.status(200).send(successResponse);
   } catch (error) {
-    res.send({
-      success: false,
-      message: error,
-    });
+    let errorResponse = errorMessageFunction(false, 400, error);
+    res.status(400).send(errorResponse);
   }
-}
+};
 
 module.exports = {
   putAuthorData,

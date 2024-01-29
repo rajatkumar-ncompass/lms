@@ -1,29 +1,35 @@
 const c = require("../../utils/db");
+const { successMessageFunction } = require("../../utils/successMessage");
+const { errorMessageFunction } = require("../../utils/errorMessage");
 
-async function deleteAuthorData(req, res) {
+let deleteQuery = "DELETE FROM AUTHOR WHERE ID=${ID}";
+const deleteAuthorData = async (req, res) => {
   try {
     let sTime = performance.now();
-    const ID = req.query.id;
-    await c.executeQuery(`DELETE FROM AUTHOR WHERE ID="${ID}"`).then((res) => {
-      console.log("Success");
+    const { ID } = req.body;
+    console.log(ID);
+    const finalDeleteQuery = deleteQuery.replace("${ID}", ID);
+    await c.executeQuery(finalDeleteQuery).then((response) => {
+      console.log(response);
     });
 
     let eTime = performance.now();
     let tTime = eTime - sTime;
-    res.send({
-      success: true,
-      message: "Data Deleted successfully",
-      startTime: sTime,
-      endTime: eTime,
-      totalTime: tTime,
-    });
+    let successResponse = successMessageFunction(
+      true,
+      200,
+      "Row Deleted Successfully",
+      "",
+      sTime,
+      eTime,
+      tTime
+    );
+    res.status(200).send(successResponse);
   } catch (error) {
-    res.send({
-      success: false,
-      message: error,
-    });
+    let errorResponse = errorMessageFunction(false, 400, error);
+    res.status(400).send(errorResponse);
   }
-}
+};
 
 module.exports = {
   deleteAuthorData,

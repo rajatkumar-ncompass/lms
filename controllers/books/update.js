@@ -3,11 +3,19 @@ const c = require("../../utils/db");
 async function putBookData(req, res) {
   try {
     let sTime = performance.now();
-    const { ID, FIRST_NAME } = req.body;
+    const { ID } = req.body;
+    let s = "";
+    fields.map((f) => {
+      String(req.body[f]).length > 0
+        ? f != "ID"
+          ? (s += `${f}='${req.body[f]}',`)
+          : null
+        : null;
+    });
+    s = s.slice(0, -1);
+
     await c
-      .executeQuery(
-        `UPDATE BOOK SET FIRST_NAME="${FIRST_NAME}" WHERE ID="${ID}"`
-      )
+      .executeQuery(`UPDATE BOOK SET ${s} WHERE ID=${ID}`)
       .then((res) => {
         console.log("Success");
       });

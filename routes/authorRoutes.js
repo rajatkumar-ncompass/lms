@@ -4,12 +4,12 @@ const authorSelectController = require("../controllers/authors/select");
 const authorUpdateController = require("../controllers/authors/update");
 const authorInsertController = require("../controllers/authors/insert");
 const authorDeleteController = require("../controllers/authors/delete");
-const validateAuthor = require("../utils/validation");
+const v = require("../utils/validation");
 
 router.get("/", authorSelectController.getAuthorData);
 router.post(
   "/add",
-  validateAuthor.validateAuthor,
+  v.validateAuthor,
   authorInsertController.postAuthorData
 );
 router.put("/update", authorUpdateController.putAuthorData);

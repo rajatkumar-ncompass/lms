@@ -6,16 +6,22 @@ const AuthorSchema = Joi.object({
   LAST_NAME: Joi.string(),
 });
 
-async function validateAuthor(req, res, next) {
+const validateAuthor = async (req, res, next) => {
   try {
-    const value = await AuthorSchema.validateAsync(req.body);
+    const authors = req.body.authors;
+    const validationPromises = authors.map(async (key) => {
+      try {
+        const value = await AuthorSchema.validateAsync(key);
+      } catch (error) {
+        throw error;
+      }
+    });
+    await Promise.all(validationPromises);
     next();
   } catch (err) {
     res.status(400).send({ message: err });
   }
-}
-
-
+};
 
 module.exports = {
   validateAuthor,

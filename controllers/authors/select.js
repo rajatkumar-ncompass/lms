@@ -1,30 +1,46 @@
 const c = require("../../utils/db");
+const redisClient = require("../../utils/redisClient");
+const { successMessageFunction } = require("../../utils/successMessage");
+const { errorMessageFunction } = require("../../utils/errorMessage");
+// const zlib = require("zlib");
 
-async function getAuthorData(req, res) {
+const selectQuery = "SELECT * FROM AUTHOR";
+
+const getAuthorData = async (req, res) => {
   try {
-    let sTime = performance.now();
     let dataObtained;
-    await c.executeQuery(`SELECT * FROM AUTHOR`).then((res) => {
-      dataObtained = res;
+    let sTime = performance.now();
+
+    await c.executeQuery(selectQuery).then((res) => {
+      dataObtained = res[0];
     });
 
     let eTime = performance.now();
     let tTime = eTime - sTime;
-    res.send({
-      success: true,
-      message: "fetched data successfully",
-      data: dataObtained,
-      startTime: sTime,
-      endTime: eTime,
-      totalTime: tTime,
+
+    let bufferObject = new Buffer.from(JSON.stringify(dataObtained));
+    zlib.gzip(bufferObject, function (err, zippedData) {
+      if (!err) {
+        let successResponse = successMessageFunction(
+          true,
+          200,
+          "Data Fetched Successfully",
+          zippedData,
+          sTime,
+          eTime,
+          tTime
+        );
+        res.status(200).send(successResponse);
+      } else {
+        let errorResponse = errorMessageFunction(false, err.statusCode, err);
+        res.status(500).send(errorResponse);
+      }
     });
   } catch (error) {
-    res.send({
-      success: false,
-      message: error,
-    });
+    let errorResponse = errorMessageFunction(false, 500, error);
+    res.status(500).send(errorResponse);
   }
-}
+};
 
 module.exports = {
   getAuthorData,
